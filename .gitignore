@@ -2,3 +2,4 @@
 student/*.o
 student/*.d
 test.o
+*.swp
