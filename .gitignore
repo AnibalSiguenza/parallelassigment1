@@ -1,4 +1,4 @@
-.o
-student/.o
-student/.d
+*.o
+student/*.o
+student/*.d
 test.o
