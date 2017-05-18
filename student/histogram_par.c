@@ -21,6 +21,8 @@ void * countingInBlocks(void * ptr){
     block_t *blocks=args->blocks;
     int * histogram=args->histogram;
 	char current_word[20] = "";
+    char initial_list[6]={'P','A','N','D','S','B'};
+    int do_search=0;
 	int c = 0;
     for(int i=0;i<NNAMES;i++){
         histogram[i]=0;
@@ -33,11 +35,17 @@ void * countingInBlocks(void * ptr){
             }
             // if the character is not an alphabet it is the end of a word.
             // Compare the word with the list of names.
+            // "Pierre","Andrew","Nicholas","Natasha","Napoleon","Dolokhov","Anatole","Anna","Sonya","Boris"
             else {
-                current_word[c] = '\0';
-                for(int k = 0; k < NNAMES; k++)	{
+                for(int l=0;l<6;l++){
+                    do_search+=(initial_list[l]==current_word[0]);
+                }
+                if(do_search){
+                    current_word[c] = '\0';
+                    for(int k = 0; k < NNAMES; k++)	{
                     if(!strcmp(current_word, names[k]))
                         histogram[k]++;
+                    }
                 }
                 c = 0;
             }
