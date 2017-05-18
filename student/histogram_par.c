@@ -50,19 +50,28 @@ void get_histogram(int nBlocks, block_t *blocks, histogram_t histogram, int num_
     pthread_t * thread=(pthread_t*)malloc(num_threads*sizeof(*thread));
     struct pthread_args * arg ;
     arg = (struct pthread_args *)malloc(num_threads*sizeof(*arg));
-    int nBlockPThreads=nBlocks/num_threads+2;
+    int nBlockPThreads=(nBlocks+num_threads-1)/num_threads;
     int resNBlocks=nBlocks%nBlockPThreads; 
     printf("num_threads=%i nBlocks=%i nBlockPthreads=%i resNBlocks=%i\n",num_threads,nBlocks,nBlockPThreads,resNBlocks);
-    for(int i=1;i<num_threads;i++){
-        arg[i-1].initIndex=(i-1)*nBlockPThreads;
-        arg[i-1].endIndex=i*nBlockPThreads;
-        arg[i-1].blocks=blocks;
-        pthread_create(thread+i-1,NULL,&countingInBlocks,arg+i-1);
+    if(resNBlocks==0){
+        for(int i=0;i<num_threads;i++){
+            arg[i].initIndex=i*nBlockPThreads;
+            arg[i].endIndex=(i+1)*nBlockPThreads;
+            arg[i].blocks=blocks;
+            pthread_create(thread+i,NULL,&countingInBlocks,arg+i);
+        }
+    }else{
+        for(int i=1;i<num_threads;i++){
+            arg[i-1].initIndex=(i-1)*nBlockPThreads;
+            arg[i-1].endIndex=i*nBlockPThreads;
+            arg[i-1].blocks=blocks;
+            pthread_create(thread+i-1,NULL,&countingInBlocks,arg+i-1);
+        }
+        arg[num_threads-1].initIndex=(num_threads-1)*nBlockPThreads;
+        arg[num_threads-1].endIndex=(num_threads-1)*nBlockPThreads+resNBlocks;
+        arg[num_threads-1].blocks=blocks;
+        pthread_create(thread+num_threads-1,NULL,&countingInBlocks,arg+num_threads-1);
     }
-    arg[num_threads-1].initIndex=(num_threads-1)*nBlockPThreads;
-    arg[num_threads-1].endIndex=(num_threads-1)*nBlockPThreads+resNBlocks;
-    arg[num_threads-1].blocks=blocks;
-    pthread_create(thread+num_threads-1,NULL,&countingInBlocks,arg+num_threads-1);
     for(int i=0;i<num_threads;i++){
         printf("thread=%i init=%i end=%i\n",i+1,arg[i].initIndex,arg[i].endIndex);
         pthread_join(thread[i],NULL);  
