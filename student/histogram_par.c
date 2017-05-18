@@ -52,10 +52,10 @@ void get_histogram(int nBlocks, block_t *blocks, histogram_t histogram, int num_
     arg = (struct pthread_args *)malloc(num_threads*sizeof(*arg));
     int nBlockPThreads=nBlocks/num_threads+1;
     int resNBlocks=nBlocks%num_threads;
-    for(int i=0;i<num_threads-1;i++){
-        arg[i].initIndex=i*nBlockPThreads;
-        arg[i].endIndex=(i+1)*nBlockPThreads-1;
-        pthread_create(thread+i,NULL,&countingInBlocks,arg+i);
+    for(int i=1;i<num_threads;i++){
+        arg[i-1].initIndex=(i-1)*nBlockPThreads;
+        arg[i-1].endIndex=i*nBlockPThreads-1;
+        pthread_create(thread+i,NULL,&countingInBlocks,arg+i-1);
     }
     arg[num_threads-1].initIndex=num_threads*nBlockPThreads;
     arg[num_threads-1].endIndex=num_threads*nBlockPThreads+resNBlocks;
