@@ -60,7 +60,7 @@ void get_histogram(int nBlocks, block_t *blocks, histogram_t histogram, int num_
     arg = (struct pthread_args *)malloc(num_threads*sizeof(*arg));
     int nBlockPThreads=(nBlocks+num_threads-1)/num_threads;
     int resNBlocks=nBlocks%nBlockPThreads; 
-    printf("num_threads=%i nBlocks=%i nBlockPthreads=%i resNBlocks=%i\n",num_threads,nBlocks,nBlockPThreads,resNBlocks);
+    //printf("num_threads=%i nBlocks=%i nBlockPthreads=%i resNBlocks=%i\n",num_threads,nBlocks,nBlockPThreads,resNBlocks);
     if(resNBlocks==0){
         for(int i=0;i<num_threads;i++){
             arg[i].initIndex=i*nBlockPThreads;
@@ -81,7 +81,7 @@ void get_histogram(int nBlocks, block_t *blocks, histogram_t histogram, int num_
         pthread_create(thread+num_threads-1,NULL,&countingInBlocks,arg+num_threads-1);
     }
     for(int i=0;i<num_threads;i++){
-        printf("thread=%i init=%i end=%i\n",i+1,arg[i].initIndex,arg[i].endIndex);
+        //printf("thread=%i init=%i end=%i\n",i+1,arg[i].initIndex,arg[i].endIndex);
         pthread_join(thread[i],NULL);  
         for(int j=0;j<NNAMES;j++){
             histogram[j]+=arg[i].histogram[j];
