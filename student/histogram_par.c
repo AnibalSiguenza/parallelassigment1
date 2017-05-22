@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #include "histogram.h"
+#define QUICKIE_STRCMP(a, b)  (*(a) != *(b) ? (int) ((unsigned char) *(a) -(unsigned char) *(b)) : strcmp((a), (b)))
 
 struct pthread_args{
     int initIndex;
@@ -43,7 +44,7 @@ void * countingInBlocks(void * ptr){
                 if(do_search){
                     current_word[c] = '\0';
                     for(int k = 0; k < NNAMES; k++)	{
-                    if(!strcmp(current_word, names[k]))
+                    if(!QUICKIE_STRCMP(current_word, names[k]))
                         histogram[k]++;
                     }
                 }
